@@ -24,7 +24,6 @@ $LIST_ITEMS = @(
 )
 $DATAS = @()
 
-
 function write-document($firstName, $lastName) {
   if (Test-Path -Path $EXCEL_FILE) {
     
@@ -41,37 +40,41 @@ function write-document($firstName, $lastName) {
   
   $DATAS | ForEach-Object {
     $oneData = $_
+    if($($_.firstName) -eq ""){
+      write-host "Erreur sur la ligne, champs vide" 
+    }else{
+      
+      $FONT_FAMILY = "Cambria"
     
-    $FONT_FAMILY = "Cambria"
+      ## add 3 paragraphs
+      Add-WordText -WordDocument $WordDocument -Text "$ENTETE `n`n" -FontSize 11 -FontFamily $FONT_FAMILY  > $null
+      Add-WordText -WordDocument $WordDocument -Text "`t`tOLEOSEN" -FontSize 22 -FontFamily $FONT_FAMILY -bold $true -Color DarkRed  > $null
+      Add-WordText -WordDocument $WordDocument -Text "Dakar le $(Get-Date -Format "dd/MM/yyyy")`n`n`n" -FontSize 11 -FontFamily $FONT_FAMILY  -Alignment right > $null
+      
     
-    ## add 3 paragraphs
-    Add-WordText -WordDocument $WordDocument -Text "$ENTETE `n`n" -FontSize 11 -FontFamily $FONT_FAMILY  > $null
-    Add-WordText -WordDocument $WordDocument -Text "`t`tOLEOSEN" -FontSize 22 -FontFamily $FONT_FAMILY -bold $true -Color DarkRed  > $null
-    Add-WordText -WordDocument $WordDocument -Text "Dakar le $(Get-Date -Format "dd/MM/yyyy")`n`n`n" -FontSize 11 -FontFamily $FONT_FAMILY  -Alignment right > $null
-  
-  
-    Add-WordText -WordDocument $WordDocument -Text "CERTIFICAT MEDICAL`n`n" -FontSize 14 -FontFamily $FONT_FAMILY -Bold $true -Color DarkBlue -Alignment center > $null
-  
-    Add-WordText -WordDocument $WordDocument -Text $BODY -FontSize 11 -FontFamily $FONT_FAMILY > $null
-    Add-WordText -WordDocument $WordDocument -Text "Mr. $($oneData.firstName) $($oneData.lastName)" -FontSize 11 -FontFamily $FONT_FAMILY -Bold $true > $null
-    Add-WordText -WordDocument $WordDocument -Text "Né (e) le $(Get-Date $oneData.birthday -Format "dd/MM/yyyy")`n" -FontSize 11 -FontFamily $FONT_FAMILY -Bold $true > $null
-  
-    Add-WordList -WordDocument $WordDocument -ListType Bulleted -ListData $LIST_ITEMS   > $null
-  
-    Add-WordText -WordDocument $WordDocument -Text "`n$APTE, en conclusion l’estimons :`n" -FontSize 11 -FontFamily $FONT_FAMILY  > $null
-    Add-WordText -WordDocument $WordDocument -Text "APTE pour le travail. `n" -FontSize 11 -FontFamily $FONT_FAMILY -bold $true > $null
-  
-    Add-WordText -WordDocument $WordDocument -Text "`n" -FontSize 11 -FontFamily $FONT_FAMILY -bold $true > $null
-  
-    Add-WordText -WordDocument $WordDocument -Text "Le médecin d'entreprise" -FontSize 11 -FontFamily $FONT_FAMILY -UnderlineStyle singleLine -Alignment center > $null
-  
-    Add-WordPicture -WordDocument $WordDocument -ImagePath "./src/Cachet.jpg" -ImageWidth 200 -ImageHeight 110 -Alignment center > $null
-  
-    Add-WordPageBreak -WordDocument $WordDocument  > $null
-
-    write-host "  --OK--> Certificat pour $($oneData.firstName) $($oneData.lastName)`n"
-    Start-sleep -Milliseconds 200
-  
+      Add-WordText -WordDocument $WordDocument -Text "CERTIFICAT MEDICAL`n`n" -FontSize 14 -FontFamily $FONT_FAMILY -Bold $true -Color DarkBlue -Alignment center > $null
+    
+      Add-WordText -WordDocument $WordDocument -Text $BODY -FontSize 11 -FontFamily $FONT_FAMILY > $null
+      Add-WordText -WordDocument $WordDocument -Text "Mr. $($oneData.firstName) $($oneData.lastName)" -FontSize 11 -FontFamily $FONT_FAMILY -Bold $true > $null
+      Add-WordText -WordDocument $WordDocument -Text "Né (e) le $(Get-Date $oneData.birthday -Format "dd/MM/yyyy")`n" -FontSize 11 -FontFamily $FONT_FAMILY -Bold $true > $null
+      
+      Add-WordList -WordDocument $WordDocument -ListType Bulleted -ListData $LIST_ITEMS   > $null
+      
+      Add-WordText -WordDocument $WordDocument -Text "`n$APTE, en conclusion l’estimons :`n" -FontSize 11 -FontFamily $FONT_FAMILY  > $null
+      Add-WordText -WordDocument $WordDocument -Text "APTE pour le travail. `n" -FontSize 11 -FontFamily $FONT_FAMILY -bold $true > $null
+      
+      Add-WordText -WordDocument $WordDocument -Text "`n" -FontSize 11 -FontFamily $FONT_FAMILY -bold $true > $null
+      
+      Add-WordText -WordDocument $WordDocument -Text "Le médecin d'entreprise" -FontSize 11 -FontFamily $FONT_FAMILY -UnderlineStyle singleLine -Alignment center > $null
+      
+      Add-WordPicture -WordDocument $WordDocument -ImagePath "./src/Cachet.jpg" -ImageWidth 200 -ImageHeight 110 -Alignment center > $null
+      
+      Add-WordPageBreak -WordDocument $WordDocument  > $null
+      
+      write-host "  --OK--> Certificat pour $($oneData.firstName) $($oneData.lastName)`n"
+      Start-sleep -Milliseconds 200
+    }
+    
   }
   ### Save document
   write-host ==> Sauvegarde du fichier People.docx`n 
